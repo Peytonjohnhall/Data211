@@ -1,0 +1,89 @@
+---
+title: "Ulcerative Colitis Weight Rehabilitation"
+author: "Peyton Hall"
+date: "04/25/2024"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r Load Necessary Libraries}
+library(ggplot2)
+```
+
+```{r Create Columns & Rows}
+# Create a matrix UC
+UC <- matrix(NA, nrow = 14, ncol = 4)
+
+# Assign the data to the matrix
+UC <- matrix(
+  c("02/24/2024", "148.6", "4 pills", NA,
+    "02/25/2024", "150.2", "4 pills", NA,
+    "02/26/2024", "151.6", "4 pills", "Visited Gym",
+    "02/27/2024", "152.4", "4 pills", NA,
+    "02/28/2024", "154.2", "4 pills", NA,
+    "02/29/2024", "156.6", "4 pills", NA,
+    "03/01/2024", "156.4", "4 pills", "Visited Gym",
+    "03/02/2024", "158.0", "3 pills", NA,
+    "03/03/2024", "158.2", "3 pills", NA,
+    "03/04/2024", "158.8", "3 pills", "Visited Gym",
+    "03/05/2024", "158.8", "3 pills", NA,
+    "03/06/2024", "157.4", "3 pills", NA,
+    "03/07/2024", "160.6", "3 pills", "Visited Gym",
+    "03/08/2024", "158.4", "3 pills", "Visited Gym"),
+  nrow = 14,
+  byrow = TRUE
+)
+
+# Assign column names
+colnames(UC) <- c("Date", "Weight", "Prednisone Dosage", "Activity")
+
+# Print the matrix
+UC
+```
+
+## Note: Prednisone Chemical Formular = C_21 H_26 O_5
+
+```{r Visualize the Data}
+# Convert matrix UC to data frame
+UC_df <- as.data.frame(UC)
+
+# Convert weight column to numeric, handling non-numeric entries
+UC_df$Weight <- as.numeric(ifelse(grepl("[0-9.]+", UC_df$Weight), UC_df$Weight, NA))
+
+# Create the scatter plot with regression line using the data frame UC_df
+ggplot(UC_df, aes(x = as.Date(Date, "%m/%d/%Y"), y = Weight, color = as.factor(`Prednisone Dosage`))) +
+  geom_point() +  # Scatter plot points
+  guides(color = guide_legend(title = "Prednisone Dosage")) +
+  scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9")) +
+  geom_smooth(method = "lm", se = FALSE, color = "navy") +  # Regression line
+  labs(title = "Ulcerative Colitis Weight Rehabilitation", x = "Date (m/y)", y = "Weight (lbs)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1),
+        plot.title = element_text(hjust = 0.5)) +  # Center the title
+  scale_x_date(date_breaks = "1 day", date_labels = "%m/%d")
+```
+
+## Hypothesis: The average rate of weight gain was higher on 4 pills rather than 3 pills.
+
+$H_0: f=t$ vs $H_a: f>t$
+Let f = slope of four
+Let t = slope of three
+```{r T-Test}
+UC_df$days <- c(1:14) # create a vector 1 through 14 and save it into the UC_df data frame
+
+model.4days = lm(Weight ~ days, data = UC_df[1:7,])
+model.3days = lm(Weight ~ days, data = UC_df[8:14,])
+
+summary(model.4days)
+summary(model.3days)
+
+# two values to compare: 1.3857 slope to 0.1643 slope
+
+t.test(c(1.3857, 0.1643), c(7, 7), alternative = "greater") # (x,n,p)
+```
+
