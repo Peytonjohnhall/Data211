@@ -1,1 +1,1 @@
-Copyright (C) on all data and materials.
+Copyright (C) on all data and RMD source code.
