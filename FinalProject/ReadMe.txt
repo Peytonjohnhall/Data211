@@ -1,1 +1,1 @@
-Copyright on all data and material.
+Copyright on all data and materials.
