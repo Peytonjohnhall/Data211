@@ -1,0 +1,104 @@
+---
+title: "In Class Work Week 10"
+author: "Peyton Hall"
+date: "03/14/2024"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r Clear the Environment}
+rm(list=ls())
+```
+
+```{r Load Nesessary Libraries}
+library(tidyverse)
+library(Lahman)
+```
+
+
+```{r pivot_longer()}
+# this is in the wider format
+data <- data.frame(year=c(2000,2001), apple=c(50,60), bananna=c(30,35))
+# data
+
+data_long <- data %>%
+  pivot_longer(cols = c(apple, bananna),names_to = "fruit",values_to = "Count")
+
+# data_long
+
+pivot_longer(data,cols = c(apple, bananna),names_to = "fruit",values_to = "Count")
+```
+
+```{r pivot_wider()}
+data_wide<-data_long%>%
+  pivot_wider(names_from = fruit,values_from = Count)
+
+data_wide
+
+```
+
+```{r}
+BP_wide<-data.frame(subjectw=c("BHO", "GWB", "WJC"), before=c(160,120,105),after=c(115,135,145))
+BP_wide
+
+BP_long<-BP_wide%>%
+  pivot_longer(cols = c("before", "after"), names_to = "when",values_to = "SBP")
+BP_long
+
+```
+
+```{r apply() function}
+mat <- matrix(1:9, nrow=3)
+mat
+
+row_sums <- apply(mat,1, sum)
+mat %>% apply(1,sum)
+
+row_sums
+
+range_diff<-function(x){
+  return(max(x)-min(x))
+}
+
+mat %>%
+  apply(1, range_diff)
+```
+
+```{r}
+# install.packages("Lahman")
+library(Lahman)
+
+TeamsData<-Teams %>%
+  select(Rank, G, W, L, R, RA)%>%
+  apply(2, mean)
+
+TeamsData
+
+# str(Teams)
+TeamsRowmean<-Teams %>%
+  select(Rank, G, W, L, R, RA)%>%
+  apply(1, mean)
+# TeamsRowmean
+```
+
+```{r}
+TeamsData2<-Teams %>%
+  select(teamID, Rank, G, W, L, R, RA)%>%
+  apply(2,mean, na.rm=TRUE)
+TeamsData2
+
+TeamsData3<-Teams %>%
+  select(teamID, Rank, G, W, L, R, RA)%>%
+  sapply(MARGIN=2,mean)
+TeamsData3
+
+TeamsData4<-Teams %>%
+  select(teamID, Rank, G, W, L, R, RA)%>%
+  lapply(MARGIN=2,mean)
+TeamsData4
+```

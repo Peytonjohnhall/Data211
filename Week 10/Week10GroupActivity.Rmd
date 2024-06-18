@@ -1,0 +1,92 @@
+---
+title: "Group Activity"
+author: "Peyton Hall"
+date: "`r Sys.Date()`"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r Clear the Environment}
+rm(list=ls())
+```
+
+```{r Load Necessary Libraries}
+library(tidyverse)
+library(tidyr)
+library(readxl)
+library(dplyr)
+```
+
+
+```{r Slide 14 Group Activity 01}
+# Group Activity 01
+# Question 1. Use the piggy data on d2l.
+Piggy <- read_excel("~/Desktop/Data211/Week 10/Piggy.xlsx")
+Piggy
+# a) Is that data a long format or a wide format?
+#    - wide because you can see that the ids have single instances of each one, 
+#      and it is split apart into weeks.
+
+# columns: "pigID", "week0", "week4", "week8", "week12", "week16"
+Piggy_long <- pivot_longer(Piggy, 
+                           cols = -pigID,  # Columns to pivot (excluding pigID)
+                           names_to = "Time",  # New column name for time
+                           values_to = "Weight")  # New column name for values
+Piggy_long
+# Now Piggy_long will have a long format where each row represents one observation for each pig at a specific time point
+
+
+# Question 2. Use the Diabete data on d2l.
+# library(readxl)
+Diabete <- read_excel("~/Desktop/Data211/Week 10/Diabete.xlsx")
+# View(Diabete)
+# a) Change the format with a variable SBP showing the systolic blood pressure at different
+# times.
+# Note: it is in long format.
+# Columns: "ID", "Time", "SBP"
+# Pivot from long to wide format
+Diabete_wide <- pivot_wider(Diabete,
+                            id_cols = ID,  # Column(s) to keep as identifier(s)
+                            names_from = Time,  # Values from "Time" will become column names
+                            values_from = SBP)  # Values from "SBP" will populate the wide format columns
+Diabete_wide
+
+```
+
+```{r Slide 21 Group Activity 02}
+# Group Activity 02:
+# Use the Tree data from d2l, find the mean for each variable of group, branch
+# density, branch thickness, and tree heights.
+# (Hint: use for loop to identify the Group, and filter() to filter each group before you
+# calculate mean of each group)
+
+Tree_data <- read_excel("~/Desktop/Data211/Week 10/Tree data.xlsx")
+# View(Tree_data)
+
+means_list <- list() # Initialize a list to store means for each group
+
+# Loop through each group
+for (i in 1:3) {
+  # Filter data for the current group using filter() function
+  group_data <- filter(Tree_data, Group == i)
+  # Calculate mean for each variable within the group
+  means <- sapply(group_data[,2:4], mean)
+  # Store means in the list
+  means_list[[paste0("Group_", i)]] <- means
+} # end for
+
+# Combine means from the list into a data frame
+means_df <- do.call(rbind, means_list)
+# Rename rows and columns
+row.names(means_df) <- paste0("Group_", 1:3)
+# Rename columns
+colnames(means_df) <- c("Meandensity", "Meanthickness", "Meanheight")
+# Print the means for each group
+means_df
+
+```

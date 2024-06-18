@@ -1,0 +1,67 @@
+---
+title: "Homework 09"
+author: "Peyton Hall"
+date: "03/21/2024"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r Clear the Environment}
+rm(list=ls())
+```
+
+```{r Load necessary libraries}
+library(readxl)
+library(tidyr)
+library(Lahman)
+library(dplyr)
+```
+
+
+```{r Question 01}
+Seafood_data <- read_excel("~/Desktop/Data211/Week 10/Seafood data.xlsx")
+Seafood_data
+# 1. On d2l, the data Sea Food recorded the bacterial growth on oysters and 
+#    mussels. The bacterial counts are measured on a log scale at three 
+#    different times.
+# a) Is the data given in a long format or a wide format? Use a comment to write
+#    your answer.
+#    - The data is in long format because the length of the columns 
+#      significantly exceed the length of the rows.
+# b) Convert the data to have one variable showing the bacterial counts and one 
+#    variable showing the different time points.
+Seafood_data_wide <- pivot_wider(Seafood_data, 
+                                  names_from = Seafood, 
+                                  values_from = c(time0, time1, time2))
+Seafood_data_wide
+```
+
+```{r Question 02}
+# 2. Use the Teams data in the Lahman package. The team IDs corresponding to 
+#    Brooklyn baseball teams are listed as: 
+#    “BR1”,”BR2”,”BR3”,”BR4”,”BR”,”BRP”,”BRF”
+# Install and load the Lahman package
+# install.packages("Lahman")
+# Teams
+# a) Keep the variables teamID, HR (home runs), and HRA (homeruns allowed).
+Teams_subset <- select(Teams, teamID, HR, HRA) # Select specific variables
+#  Teams_subset
+# b) Keep only Brooklyn baseball teams 
+#    (“BR1”,”BR2”,”BR3”,”BR4”,”BR”,”BRP”,”BRF”).
+Brooklyn_teams <- Teams_subset %>%
+                  filter(teamID %in% c("BR1", "BR2", "BR3", "BR4", "BR", "BRP", "BRF"))
+# Brooklyn_teams
+# c) Choose one apply function to find the average home runs (HR) and average 
+#    homeruns allowed (HRA).
+averages <- Brooklyn_teams %>%
+            summarise(avg_HR = mean(HR),
+                      avg_HRA = mean(HRA))
+
+# View the calculated averages
+# averages
+```
