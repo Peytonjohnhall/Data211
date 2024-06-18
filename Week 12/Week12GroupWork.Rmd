@@ -1,0 +1,53 @@
+---
+title: "Week 12 Group Work"
+author: "Peyton Hall"
+date: "03/28/2024"
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r Load necessary libraries}
+library(tidyverse)
+library(plotly)
+library(DT)
+```
+
+```{r Activity 01 Slide 06}
+Activity1 <- ggplot(data = mpg,aes(y=manufacturer))+geom_bar()
+Activity1
+
+Activity01 <- ggplotly(Activity1)
+# Activity 01
+```
+
+```{r Activity 02 Slide 10}
+Activity2 <- data.frame(Student = c("Jack", "Mike", "Kate", "Mary"),
+  Midterm = c(89, 76, 76, 90),
+  Final = c(91, 72, 81, 92)
+)
+Activity02 <- datatable(Activity2)
+# Activity02
+```
+
+```{r Activity 03 Slide 15}
+#   The variable State has the following values: Michigan State, Idaho State,
+# Washington State, and Oregon State
+#   Enter these values as a vector and name the vector as ‘State’.
+State <- c("Michigan State", "Idaho State", "Washington State", "Oregon State")
+State
+#   Remove the part of “ State” for each state name
+newstate <- substr(State, 1, 2)
+newstate
+#   Keep the first two letters for these states and name the new vector as
+# ‘newstate’(use substr) (note: use toupper() function to convert lower cases to
+# upper cases)
+newstate <- toupper(newstate)
+newstate
+```
+

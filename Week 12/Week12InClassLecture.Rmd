@@ -1,0 +1,145 @@
+---
+title: "Week 12 In Class Lecture"
+author: "Peyton Hall"
+date: "03/28/2024"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r Clear the environment}
+rm(list=ls())
+```
+
+```{r Load necessary libraries}
+library(tidyverse)
+# library(ggplot2)
+library(nycflights13)
+# install.packages("plotly")
+library(plotly)
+# install.packages("DT")
+library(DT)
+# install.packages("stringr")
+library(stringr)
+# install.packages("tm")
+library(tm)
+# install.packages("wordcloud")
+library(wordcloud)
+```
+
+# ggplotly()
+```{r Slide 05}
+# View(weather)
+graph1 <- weather %>%
+  filter(month==7)%>%
+  group_by(day)%>%
+  summarise(meanday=mean(temp)) %>%
+  ggplot(aes(x=day, y=meanday))+geom_point()
+graph1
+
+# here is a more interactive plot:
+graph2 <- ggplotly(graph1)
+# graph2
+```
+
+```{r Activity 01 Slide 06}
+Activity1 <- ggplot(data = mpg,aes(y=manufacturer))+geom_bar()
+Activity1
+
+Activity01 <- ggplotly(Activity1)
+# Activity 01
+```
+
+# Example
+```{r Slide 09}
+employee <- data.frame(
+  Name = c("John", "Kate", "Tom"),
+  Title = c("Manager", "Student", "Professor"),
+  Salary = c(70000, 30000, 60000)
+)
+employee
+
+emplotee1 <- datatable(employee)
+# emplotee1
+```
+
+```{r Activity 02 Slide 10}
+Activity2 <- data.frame(Student = c("Jack", "Mike", "Kate", "Mary"),
+  Midterm = c(89, 76, 76, 90),
+  Final = c(91, 72, 81, 92)
+)
+Activity02 <- datatable(Activity2)
+# Activity02
+```
+
+```{r Slide 11 & 12}
+x <- c ("Anderson", "Jackson", "Peterson", "Green")
+x[grep("son", x)] # it is case sensitive
+
+substr(x,start=1,stop=4)
+
+# substitution
+gsub("son","",x) # search for "son" and replace with "" (blank).
+
+str_replace_all(x,"son", "")
+```
+
+```{r Slides 16, 17, & 18 - Text Mining}
+# Analyze the text in terms of word frequencies
+#   Usually analyze the frequencies of words and generate word cloud
+#   Example:
+# Use the text of the MPR news of Vice President Kamala Harris visiting the Twin
+# Cities and the roundtable event at Metro State University in October 2022 to 
+# do text mining and generate a word cloud.
+
+# Step 1: Data Importing and Cleaning
+# Import the data into R and clean it to remove any irrelevant information, special
+# characters, etc.
+Mytext1<-readLines("https://www.mprnews.org/story/2022/10/22/theres-so-much-at-stake-vp-harris-makes-twin-cities-visit-ahead-of-midterms")
+# Creating a corpus (collection of text documents). 
+article <- Mytext1 %>%
+  VectorSource() %>%
+  Corpus() %>%
+  tm_map(content_transformer(tolower)) %>%
+  tm_map(removePunctuation) %>%
+  tm_map(removeWords,stopwords("English")) %>%
+  tm_map(stripWhitespace) %>%
+  TermDocumentMatrix() %>%
+  as.matrix()
+
+article2 <- as.data.frame(article)
+article2$freq <- article2$`1`
+
+```
+
+```{r Slide 25}
+# Why one would do this: 
+# to answer the question of how frequent does a word show up in a text?
+wordcloud(rownames(article2),article2$freq, min.freq = 7, 
+          colors = brewer.pal(8,"Dark2"))
+```
+
+```{r Slide 23}
+Mytext1<-readLines("https://www.nytimes.com/2023/03/16/business/fed-regulation-svb.html")
+# Creating a corpus (collection of text documents). 
+article <- Mytext1 %>%
+  VectorSource() %>%
+  Corpus() %>%
+  tm_map(content_transformer(tolower)) %>%
+  tm_map(removePunctuation) %>%
+  tm_map(removeWords,stopwords("English")) %>%
+  tm_map(stripWhitespace) %>%
+  TermDocumentMatrix() %>%
+  as.matrix()
+
+article1 <- sort(rowSums(article), decreasing = TRUE)
+article2 <- as.data.frame(article1)
+
+wordcloud(rownames(article2),article2$article1, min.freq = 9, 
+          colors = brewer.pal(8,"Dark2"))
+```
+

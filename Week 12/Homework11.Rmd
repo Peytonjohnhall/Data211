@@ -1,0 +1,182 @@
+---
+title: "Homework 11"
+author: "Peyton Hall"
+date: "04/04/2024"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r Clear the environment}
+rm(list=ls())
+```
+
+```{r Load necessary libraries}
+library(readxl)
+library(ggplot2)
+library(plotly)
+library(DT)
+library(tm)
+library(wordcloud)
+library(rvest)
+```
+
+
+```{r Question 01}
+marketing_data <- read_excel("~/Desktop/Data211/Week 12/marketing_data.xlsx")
+marketing_data
+# 1) The marketing_data on d2l recorded the impact of the advertising media, 
+#    Facebook, on sales. Data are the advertising budget in thousands of dollars 
+#    along with the sales. Use the data to answer the following:
+# a) Generate an appropriate graph using ggplot to show the relationship between 
+#    the Facebook advertisement amount (x) and sales amount (y); Color the 
+#    points red; Fit a linear model to the points without showing the confidence 
+#    interval band; Color the line blue.
+plot_a <- ggplot(marketing_data, aes(x = facebook, y = sales)) +
+  geom_point(color = "red") +
+  geom_smooth(method = "lm", se = FALSE, color = "blue") +
+  labs(title = "Relationship between Facebook Advertisement and Sales",
+       x = "Facebook Advertisement (Thousands of Dollars)",
+       y = "Sales Amount") +
+  theme_minimal()
+# b) Based on a), generate an interactive plot.
+plot_b <- ggplotly(plot_a)
+plot_a
+plot_b
+```
+
+```{r Question 02}
+Estriol_and_birthweight <- read_excel("~/Desktop/Data211/Week 12/Estriol and birthweight.xlsx")
+Estriol_and_birthweight
+# 2) The Estriol and Birthweight data on d2l recorded the mothers’ estriol 
+#    levels at pregnancy and the newborns’ birthweight.
+# a) Use the data to generate an appropriate graph to show the five-number 
+#    summary for birth weight.
+boxplot <- ggplot(Estriol_and_birthweight, aes(y = Birthweight)) + 
+  geom_boxplot() +
+  ylab("Birthweight") +
+  ggtitle("Boxplot of Birthweight")
+boxplot
+# b) Based on a), create an interactive plot.
+p <- ggplot(Estriol_and_birthweight, aes(y = Birthweight)) +
+  geom_boxplot() +
+  ylab("Birthweight") +
+  ggtitle("Interactive Boxplot of Birthweight")
+interactive_p <- ggplotly(p)
+interactive_p
+# c) Based on the plot, is there any outlier? If so, what is the birth weight 
+#    of that outlier? Use a comment to write it in R Markdown.
+# Based on the plot, an outlier can be visualiszd at greater than 4,000 for 
+# birthweight. Therefore, there is one clear outlier.
+```
+
+```{r Question 03}
+# 3)
+# a) Create the following table as a data frame named as StudentGrades
+# ID, HomeworkGrades, MidtermGrades, FinalGrades
+# A,  99,             82,            80
+# B,  90,             89,            83
+# C,  87,             75,            70
+# D,  95,             91,            92
+# Create the StudentGrades data frame
+StudentGrades <- data.frame(
+  ID = c("A","B","C","D"),
+  HomeworkGrades = c(99, 90, 87, 95),
+  MidtermGrades = c(82, 89, 75, 91),
+  FinalGrades = c(80, 83, 70, 92)
+)
+StudentGrades
+# b) Create an interactive table of a)
+datatable(StudentGrades)
+```
+
+```{r Question 04}
+# 4)
+# a) Create a character vector, a, with these store names: Walmart, 
+#    Walmart-marketplace, Walmart-online, Target, Target-marketplace, Amazon, 
+#    Amazon.com, AmazonFresh;
+a <- c("Walmart", "Walmart-marketplace", "Walmart-online", 
+       "Target", "Target-marketplace", 
+       "Amazon", "Amazon.com", "AmazonFresh")
+# b) Create a for-loop with the index goes from 1 to the end of the vector a; 
+#    if the first five letters of the store names are the same (think about using 
+#    substr()), then those are the same store. We want to count the number of 
+#    unique stores in the vector, a. You may want to create two for-loops, with one 
+#    to scrape the first five letters of each element of a and the other loop to 
+#    compare whether the scraped phrases are the same. At the end, you should get 3 
+#    stores.
+# Initialize an empty vector to store the first five letters of each store name
+first_five_letters <- character(length(a))
+
+# Loop through each store name and extract the first five letters
+for (i in 1:length(a)) {
+  first_five_letters[i] <- substr(a[i], 1, 5)
+} # end for
+
+# Initialize a counter for unique stores
+unique_stores <- 0
+
+# Loop through the first five letters and compare them
+for (i in 1:length(first_five_letters)) {
+  # Initialize boolean to check if the current store is unique
+  is_unique <- TRUE
+  
+  # Compare the current store's first five letters with the previous ones
+  for (j in 1:(i - 1)) {
+    if (first_five_letters[i] == first_five_letters[j]) {
+      # If the first five letters match, set boolean to False and break the loop
+      is_unique <- FALSE
+      break
+    } # end if
+  } # end for
+  
+  # If the current store is unique, increment the counter
+  if (is_unique) {
+    unique_stores <- unique_stores + 1
+  } # end if
+} # end for
+
+# Display the number of unique stores
+unique_stores
+
+```
+
+```{r Question 05}
+# 5) Use the text on 
+#    https://www.nytimes.com/2023/03/16/business/media/tiktok-buyer-biden.html 
+#    to generate a word cloud, following along with what we did in class for 
+#    text mining (create VectorSource, Corpus, remove all numbers, punctuations, 
+#    white space, English common words, etc.), generate a word cloud.
+url <- "https://www.nytimes.com/2023/03/16/business/media/tiktok-buyer-biden.html"
+text <- read_html(url) %>%
+  html_text()
+
+# Create a Corpus object
+corpus <- Corpus(VectorSource(text))
+
+# Perform text preprocessing
+corpus <- tm_map(corpus, content_transformer(tolower))
+corpus <- tm_map(corpus, removeNumbers)
+corpus <- tm_map(corpus, removePunctuation)
+corpus <- tm_map(corpus, removeWords, stopwords("en"))
+corpus <- tm_map(corpus, stripWhitespace)
+
+# Create a term-document matrix
+tdm <- TermDocumentMatrix(corpus)
+
+# Convert the term-document matrix to a matrix
+m <- as.matrix(tdm)
+
+# Calculate word frequencies
+word_freq <- sort(rowSums(m), decreasing = TRUE)
+
+# Create a word cloud
+wordcloud(names(word_freq), word_freq, min.freq = 10, random.order = FALSE)
+```
+
+
+
