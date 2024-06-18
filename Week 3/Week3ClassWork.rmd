@@ -1,0 +1,104 @@
+---
+title: "Week3ClassWork"
+author: "Peyton Hall"
+date: "2024-01-25"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Week 02 Work
+
+Take the summary statistic of mtcars dataset.
+
+```{r}
+summary(mtcars)
+```
+
+Create a dataframe named "patient"
+
+```{r}
+# Create the data frame
+patient <- data.frame(
+  Patient_ID = c(1, 2, 3),
+  Temperature = c(98, 97.9, 99.1),
+  Oxygen = c(90, 99, 93),
+  SBP = c(123, 115, 107)
+)
+# Print the data frame
+patient
+# find mean min and max
+mean(patient$Oxygen)
+min(patient$SBP)
+max(patient$SBP)
+
+```
+
+### Read files
+
+```{r}
+scores <- read.csv("~/Desktop/Data211/Week 3/reading scores.csv")
+```
+
+```{r}
+# select the .csv file from folder -> option -> command + c
+student_Data <- read.csv("~/Desktop/Data211/Week 3/student data.csv")
+student_Data
+mean(student_Data$Grade)
+```
+
+## Writing files
+
+```{r}
+Test_Score<-data.frame(Student=c("Jack", "Mike", "Mary"), Midterm=c(89,76,90), Final=c (91, 72, 92))
+
+write.csv(Test_Score,file = "~/Desktop/Data211/Week 3/WriteScores.csv")
+write.csv(Test_Score,file = "WriteScores.csv")
+```
+
+## Reading Excel
+
+```{r}
+# environment -> Import Dataset -> From Excel... -> Browse -> 
+# Navigate to desktop -> Code Preview: -> copy & paste
+library(readxl)
+student_data <- read_excel("~/Desktop/Data211/Week 3/student data.xlsx")
+# View(student_data)
+
+student_ID <- read_excel("~/Desktop/Data211/Week 3/student data.xlsx", sheet = 2)
+```
+
+## Introducing Functions
+
+```{r}
+Addition<-function(x,y){
+  sum<-x+y
+  return(sum)
+}
+
+Addition(2,5)
+```
+
+```{r}
+a<-function(x) {
+  percent=round(x*100, digits = 1)
+  result=paste(percent,"%")
+  return(result)
+}
+
+a(0.3368)
+```
+
+```{r}
+input<-20
+mysum<-function(input1, input2=10) {
+  output<-input1+input2
+  return(output)
+}
+```
+
