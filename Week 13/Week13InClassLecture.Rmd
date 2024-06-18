@@ -1,0 +1,67 @@
+---
+title: "Week13InClassLecture"
+author: "Peyton Hall"
+date: "04/04/2024"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r Load necessary libraries}
+library(stats)
+library(readxl)
+```
+
+$H_0:P = 0.2$ vs $H_a: P > 0.2$
+```{r}
+prop.test(310,1000,p=0.2,alternative = "greater")
+```
+the p-value < 2.2e-16, which is extremely low. Therefore, we should reject the 
+$H_0$ and go with $H_a$.
+
+$H_0: P = 0.5$ vs $Ha: P > 0.5$
+write doen the null and alternative. after the R chunk, write down the conclusion.
+```{r}
+prop.test(8,8,0.5,alternative = "greater")
+```
+the p-value = 0.006664. If the significance level is < 0.001, then we reject the p-value.
+
+$H_0:P=0.75$ vs $H_a:P>0.75$
+```{r Class Poll Activity}
+# how manuy people can roll their tongues?
+prop.test(14,16,0.75,alternative = "greater")
+```
+p-value=0.1932>0.05
+We fail to reject the $H_0$.
+At 5% significance level data do not provide
+enough evidence to conclude proportion of students
+who can roll their tongue is greater than 75%
+
+p:Proportion of drivers who feels comfortable driving self driving car
+$H_0:P=0.5$ vs $H_a:P<0.5$
+```{r Slide 27 Activity 02}
+selfDriving <- read_excel("~/Desktop/Data211/Week 13/Responses_to_Self-driving_Cars.xlsx")
+selfDriving
+table(selfDriving$Comfortable)
+
+length(selfDriving$Comfortable)#this will include NAs
+
+prop.test(2860,5962,0.5,alternative = "less")
+```
+p-value = 0.000906 < 0.01
+We reject $H_0$ at 1% significance level
+At 1% s.l, we have enough evidence to conclude that the P<50%
+
+```{r}
+prop.test(x=c(51,19),n=c(303,303),alternative = "greater")
+```
+p=4.079e-05<0.01
+
+Reject the $H_0$.
+At 1% s.l we have enough evidence to conclude that the proportion of voters
+who favor in YS is significantly higher than those who favor on Yo.
+
