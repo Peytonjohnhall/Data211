@@ -1,0 +1,75 @@
+---
+title: "Week 14 In Class Lecture"
+author: "Peyton Hall"
+date: "04/11/2024"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r Load necessary libraries}
+library(ggplot2)
+library(readxl)
+library(tidyverse)
+```
+
+
+```{r Slide 29 - 30}
+parks<-c("Ye","Yo", "Ye","Yo")
+year<-c("2021","2021","2022","2022")
+p<-c(51/303,19/303,60/300,44/300)
+
+mypark<-data.frame(parks,year,p)
+
+ggplot(mypark, aes(x=parks,y=p))+geom_bar(stat = "identity", position 
+                                          ="dodge", aes(fill=year))
+prop.test(c(51, 19),c(303,303),alternative="greater")
+prop.test(c(60,44),c(300,300),alternative="greater")
+prop.test(c(51+60,19+44),c(303+300,303+300),alternative="greater")
+```
+
+
+$P_f$: proportion of female who chose the decision to steal
+$P_m$: proportion of male who chose the decision to steal
+
+$H_0:P_f=P_m$ vs $H_a: P_f\ne P_m$
+```{r Activity 03 Slide 30}
+prop.test(c(140,130),c(300,270), alternative = "two.sided") #(x,n,p)
+```
+
+```{r}
+steal<-data.frame(Gender=c("female","male"),steal_P=c(140/300,130/270))
+ggplot(steal, aes(x=Gender, y=steal_P))+geom_bar(stat="identity")
+```
+
+$H_0:\mu=400$ vs $H_a: \mu>400$
+```{r}
+Battery_Life <- read_excel("~/Desktop/Data211/Week 14/Battery Life.xlsx")
+Battery_Life
+
+Battery_Life2<-filter(Battery_Life,Batterylife<1000)
+t.test(Battery_Life2$Batterylife,mu=400,alternative="greater")
+```
+We fail to reject the $H_0$ so we do not have enough evidence to conclude
+that the mean battery life is greater than 400.
+
+$H_0: \mu_h\mu_m$ $H_0: \mu_h<\mu_m$
+```{r}
+IQ_data <- read_excel("~/Desktop/Data211/Week 14/IQ data.xlsx")
+IQ_data
+
+t.test(IQ~Lead, data=IQ_data, alternative="less")
+```
+
+$H_0: \mu_l=\mu_A$ $H_A: \mu_l>\mu_A$
+```{r Slide 21}
+Books <- read_excel("~/Desktop/Data211/Week 14/Books.xlsx")
+Books
+
+t.test(Books$Bookstore,Books$Amazon,alternative = "greater",paired=TRUE)
+```
+
