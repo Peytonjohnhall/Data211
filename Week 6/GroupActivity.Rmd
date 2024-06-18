@@ -1,0 +1,44 @@
+---
+title: "GroupActivity.rmd"
+author: "Peyton Hall"
+date: "02/15/2024"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r Slide 13}
+library(ggplot2)
+
+# Install and load the mdsr package
+#install.packages("mdsr")
+library(mdsr)
+
+# Load the CIACountries dataset
+data("CIACountries")
+
+ggplot(data = CIACountries, aes(x=gdp, y=educ))+geom_point(aes(color=net_users, size=roadways))+xlim(c(0, 5000))+ylim(c(1,10))+geom_smooth(method = "lm", linetype="dotted", color="blue", se=FALSE)
+
+```
+
+```{r Slide 17}
+# Load necessary libraries
+library(readxl)
+library(ggplot2)
+
+# Read the Excel file
+# "file" -> "Import Dataset" -> "From Excel" -> "Browse" -> Copy & Paste path:
+milk <- read_excel("~/Desktop/Data211/Week 6/milk.xlsx")
+str(milk)
+
+
+# create variable year and add it into milk data set
+milk$year <- format(milk$timep, format = "%Y") 
+# create variable month and add it into milk data set
+milk$month <- format(milk$timep, format = "%m")
+ggplot(data = milk, aes(x = month, y = milk_per_cow_kg))+geom_line(aes(group=year,color=year))
+
+year<-as.factor(milk$year)
+ggplot(data = milk, aes(x = month, y = milk_per_cow_kg))+geom_line(aes(group=year,color=year))+scale_x_discrete(labels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"))
+```
+

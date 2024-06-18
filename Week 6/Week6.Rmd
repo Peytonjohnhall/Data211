@@ -1,0 +1,77 @@
+---
+title: "Week6.rmd"
+author: "Peyton Hall"
+date: "02/15/2024"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r}
+library(ggplot2)
+
+```
+
+# Adding a regression line to the scatter plot
+```{r}
+ggplot(data = midwest, aes(x=poptotal, y=popwhite))+geom_point(aes(color=state))+geom_smooth(method = "lm", linetype="dashed", color="red", se=FALSE)
+
+ggplot(data = midwest, aes(x=poptotal, y=popwhite))+geom_point(aes(color=state))+geom_smooth(method = "lm", linetype="dashed", color="red", se=FALSE)+ labs (color="US States")
+
+ggplot(data = midwest, aes(x=poptotal, y=popwhite))+geom_point(aes(color=state))+geom_smooth(method = "lm", linetype="dashed", color="red", se=FALSE)+scale_color_manual(values = c("red", "green", "blue", "pink", "purple"), name = "States of the United States")
+
+```
+
+```{r}
+library(ggplot2)
+
+#str(economics)
+#View(economics)
+ggplot(data=economics, aes(x=date, y=psavert))+geom_line(linetype="solid")+labs(x="Time", y="Personal Savings Rate")+geom_smooth(method="auto")
+```
+
+```{Slide 17}
+# Load necessary libraries
+library(readxl)
+library(ggplot2)
+
+# Read the Excel file
+# "file" -> "Import Dataset" -> "From Excel" -> "Browse" -> Copy & Paste path:
+milk <- read_excel("Desktop/Data211/Week 6/milk.xlsx")
+str(milk)
+
+
+# create variable year and add it into milk data set
+milk$year <- format(milk$timep, format = "%Y") 
+# create variable month and add it into milk data set
+milk$month <- format(milk$timep, format = "%m")
+ggplot(data = milk, aes(x = month, y = milk_per_cow_kg))+geom_line(aes(group=year,color=year))
+
+year<-as.factor(milk$year)
+ggplot(data = milk, aes(x = month, y = milk_per_cow_kg))+geom_line(aes(group=year,color=year))+scale_x_discrete(labels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"))
+```
+
+```{r}
+library(ggplot2)
+
+str(mpg)
+
+ggplot(data=mpg,aes(x=manufacturer))+geom_bar()
+
+ggplot(data=mpg,aes(x=manufacturer))+geom_bar(fill="blue",color="black")
+
+ggplot(data=mpg,aes(x=manufacturer))+geom_bar(fill="blue",color="black")+theme(axis.text.x = element_text(angle = 65))
+```
+
+```{r}
+ggplot(data=mpg,aes(x=displ))+geom_histogram(bins=30, fill="blue",color="red")
+
+ggplot(data=mpg,aes(x=displ))+geom_histogram(binwidth=2, fill="blue",color="red")
+```
+
+```{r}
+ggplot(data=mpg, aes(cty))+geom_boxplot()
+#View(mpg)
+ggplot(data=mpg, aes(x=cty, y=class))+geom_boxplot(fill="yellow",color="black")
+```
+

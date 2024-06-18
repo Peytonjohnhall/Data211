@@ -1,0 +1,84 @@
+---
+title: "Homework06.rmd"
+author: "Peyton Hall"
+date: "02/22/2024"
+output:
+  pdf_document: default
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r Question1}
+library(readxl)
+# hover over xlsx file + option + command + c  + command + v
+birthweight <- read_excel("/Users/peytonhall/Desktop/Data211/Week 6/birthweight.xlsx")
+#View(birthweight)
+
+library(ggplot2)
+
+# Create the plot
+ggplot(birthweight, aes(x = Birthweight, y = SBP)) +
+  geom_point(color = "red") +  # Make the points red
+  labs(x = "Birth Weight", y = "Systolic Blood Pressure")  +
+  geom_smooth(method = "lm", se = FALSE)  # Add a regression line
+
+```
+
+```{r Question 2}
+library(ggplot2)
+
+# Create the histogram
+ggplot(birthweight, aes(x = SBP)) +
+  geom_histogram(bins = 12, fill = "gold", color = "black") +
+  labs(x = "Systolic Blood Pressure", y = "Counts")
+
+```
+
+```{r Question 3}
+library(readxl)
+LEAD <- read_excel("/Users/peytonhall/Desktop/Data211/Week 6/LEAD.xlsx")
+#View(LEAD)
+
+library(ggplot2)
+
+# Create a boxplot
+ggplot(LEAD, aes(x = as.factor(Group), y = iqf)) +
+  geom_boxplot() +
+  labs(x = "Lead Group", y = "Full IQ Scores")
+
+```
+
+```{r Question 4}
+library(readxl)
+COVIDVaccine <- read_excel("/Users/peytonhall/Desktop/Data211/Week 6/COVIDVaccine.xlsx")
+#View(COVIDVaccine)
+
+# Create the bar graph
+ggplot(COVIDVaccine, aes(x = ProductCategory)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(x = "Product Category", y = "Counts")
+
+```
+## Note: Question 5 is the only question I initially could not come up with a solution for. However, I was able to find one and understand the code, after class, as another student was working on it.
+
+```{r Question 5}
+library(readxl)
+co2_loa <- read_excel("/Users/peytonhall/Desktop/Data211/Week 6/co2_loa.xlsx")
+#View(co2_loa)
+
+library(ggplot2)
+
+str(co2_loa)
+co2_loa$month2<-as.factor(co2_loa$month)
+co2_loa$year2<-as.factor(co2_loa$year)
+
+ggplot(data=co2_loa, aes(x=month2, y=co2_conc))+geom_line(aes(group=year2,color=year2))+labs(x="Month",y="CO0 Concentration")
+
+
+```
+
