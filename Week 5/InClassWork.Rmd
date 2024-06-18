@@ -1,0 +1,58 @@
+---
+title: "InClassWork.rmd"
+author: "Peyton Hall"
+date: "02/08/2024"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+data <- USArrests
+```
+
+```{r}
+# install.packages("ggplot2")
+library(ggplot2)
+# View(midwest)
+str(midwest) # check the structure
+```
+
+
+## Scatter Plot
+```{r}
+ggplot(data = midwest, aes(x=area, y=poptotal))+geom_point()
+```
+
+```{r}
+ggplot(data = midwest, aes(x=area, y=poptotal))+geom_point()+ylim(c(0,170000))
+```
+
+```{r}
+ggplot(data=midwest,aes(x=area,y=poptotal))+geom_point()+ylim(c(0,170000))+labs(x="Area", y="Total Population", title = "Relationship Between Area and The Total Population")
+```
+
+```{r}
+ggplot(data=midwest,aes(x=area,y=poptotal))+geom_point(color="red")+ylim(c(0,170000))+labs(x="Area", y="Total Population", title = "Relationship Between Area and The Total Population")
+```
+
+```{r}
+ggplot(data=midwest,aes(x=area,y=poptotal))+geom_point(aes(color=state))+ylim(c(0,170000))+labs(x="Area", y="Total Population", title = "Relationship Between Area and The Total Population")
+```
+
+```{r}
+ggplot(data=midwest,aes(x=area,y=poptotal))+geom_point(aes(size=inmetro))+ylim(c(0,170000))+labs(x="Area", y="Total Population", title = "Relationship Between Area and The Total Population")
+```
+
+```{r}
+
+midwest2<-midwest
+midwest2$metro<-as.factor(midwest2$inmetro)
+str(midwest2)
+
+ggplot(data=midwest2,aes(x=area,y=poptotal))+geom_point(aes(size=metro))+ylim(c(0,170000))+labs(x="Area", y="Total Population", title = "Relationship Between Area and The Total Population")
+```
