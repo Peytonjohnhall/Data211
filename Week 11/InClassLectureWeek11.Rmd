@@ -1,0 +1,80 @@
+---
+title: "In Class Lecture Week 11"
+author: "Peyton Hall"
+date: "03/21/2024"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r Clear the Environment}
+rm(list=ls())
+```
+
+```{r Load necessary libraries}
+# install.packages("rvest") # install r vest
+library(rvest)
+```
+
+```{r Data Scraping Notes}
+# HTML Windows Note: right click --> "view page source"
+# HTML MacBook Pro Note: Press "Develop" --> "show page source" 
+#                              (or shortcut: command + U) --> view HTML code
+```
+
+## Data scraping
+
+```{r Slide 29-30}
+# scrape the title of a webpage
+url <- 'http://quotes.toscrape.com'
+webpage <- read_html(url)
+
+Title <- webpage%>%
+  html_nodes("title")%>%
+  html_text()
+Title
+```
+
+```{r Slide 31-32}
+# extracting quotes
+Quotes <- webpage%>%
+  html_nodes(".quote .text") %>%
+  html_text()
+Quotes
+
+# extracting author names 
+Authors <- webpage %>%
+  html_nodes(".quote .author") %>%
+  html_text()
+Authors
+
+FamousQuotes <- data.frame(Quotes, Authors)
+FamousQuotes
+
+```
+
+```{r Slide 33-34}
+# Use functions html_nodes() and html_table() from the package of rvest
+
+# Extracting table data
+URL2 <- "https://www.metrostate.edu/academics/courses?combine=&cid=DATA&title"
+CourseData <- read_html(URL2) %>%
+  html_nodes("table") %>%
+  html_table(fill = TRUE) %>%
+  .[[1]]
+CourseData
+```
+
+```{r Personal Notes}
+# Microsoft excel introduction steps:
+# open the table -> click on "one cell" -> pick the source and click on it ->
+# press "submit"/ check -> press "new sheet" from "create your own pivot table"
+# -> from there, it is the same as how it was on D2L
+# Note: just submit the excel sheet
+# Slides we worked with for excel: 25, 27, 29
+```
+

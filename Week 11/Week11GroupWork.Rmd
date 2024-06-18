@@ -1,0 +1,35 @@
+---
+title: "Week 11 Group Work"
+author: "Peyton Hall"
+date: "03/21/2024"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r Load necessary libraries}
+library(rvest)
+```
+
+```{r Slide 35}
+# Activity:
+# This is the Wikipedia website about the 2022 Winter Olympics medal winners :
+# https://en.wikipedia.org/wiki/List_of_2022_Winter_Olympics_medal_winners
+# Table 13 shows the winning athletes in figure skating. Scrape that table.
+
+url <- "https://en.wikipedia.org/wiki/List_of_2022_Winter_Olympics_medal_winners"
+
+# Read the HTML content of the page
+page <- read_html(url)
+
+# Extract the table containing figure skating winners (Table 13)
+table_13 <- page %>%
+  html_nodes("table") %>% # table node
+  html_table() %>%
+  .[[13]]
+table_13
+```
