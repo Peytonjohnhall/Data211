@@ -1,0 +1,411 @@
+---
+title: "Homework07"
+author: "Peyton Hall"
+date: "03/14/2024"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Complete the activities mentioned in the videos
+
+```{r Part 01 Slide 20}
+# Everything copied and pasted from slide 20:
+# Example
+
+# df <- data.frame(a = 1:5, b = c(10, 20, 30, 40, 50))
+# df <- df %>%mutate(c = a + b)
+# df
+
+# perform multiple operations in a single mutate() call
+# df <- df %>%
+#   mutate(
+#   c = a + b,
+#   d = a * 2,
+#   e = b/2
+#   )
+# print(df)
+
+```
+
+```{r Part 01 Slide 21}
+# Everything copied and pasted from slide 20:
+# Overwrite existing columns:
+
+# df <- df %>%
+#   mutate(a = a * 100)
+# print(df)
+
+# Using helper functions: dplyr provides several helper functions that can be used inside mutate(). For
+# instance, if_else() can be useful for conditional changes:
+
+# df <- df %>%
+#   mutate(f = if_else(a > 200, "High", "Low"))
+# print(df)
+```
+
+```{r Part 01 Slide 22}
+# Example:
+# 1. use the Orange data, 
+#Choose the trees with circumference >100
+# Add a column to show the unit circumference using circumference/age 
+#(name that variable ad unitc)
+# Save the changes as new data NewOrange
+
+# NewOrange<-Orange%>%
+#   filter(circumference>100)%>%
+#   mutate(unitc = circumference/age)
+# print(NewOrange)
+
+# Use the InsectSprays data, and add a new column “Odor” to re-group the sprays: If the spray
+# is A, B or C, group them as group LowOdor, otherwise call the spray High odor. Use the ifelse
+# function to do this.
+
+# library(tidyverse)
+
+# InsectSprays%>%
+#   mutate(Odor=ifelse( spray %in% c("A", "B", "C"), "LowOdor", "HighOdor"))
+
+```
+
+```{r Part 01 Slide 23 Activity 02}
+# use the flights data from the nycflights13 package
+# Choose the flights in January, from JFK to MSP
+# Select the variables: dep_time, dep_delay, arr_time, arr_delay, air_time, and
+#distance
+# Add a column to show the speed of selected flights: speed=distance/ air time
+# Create a new file “newflight” to save the above changes
+
+library(nycflights13)
+library(dplyr)
+
+# Filter flights from JFK to MSP in January
+january_flights <- filter(flights, month == 1, origin == "JFK", dest == "MSP")
+
+# Select required variables
+selected_flights <- select(january_flights, dep_time, dep_delay, arr_time, arr_delay, air_time, distance)
+
+# Add a column for speed
+selected_flights <- mutate(selected_flights, speed = distance / air_time)
+
+# Save the modified data frame to a new file
+write.csv(selected_flights, "newflight.csv", row.names = FALSE)
+
+
+```
+
+```{r Part 01 Slide 24}
+# Package: “dplyr”
+# The arrange() function is used to reorder rows of a dataframe by column values.
+
+# data %>% arrange(variablename)
+
+# Default: sort by ascending order
+# If want to sort by descending order, use desc(variable)
+
+```
+
+```{r Part 01 Slide 25}
+# Example:Assume you have a dataframe df with columns A and B
+df <- data.frame(A = c(3, 1, 4), B = c(6, 5, 7))
+#  arrange df by column A in ascending order as:
+arrange(df, A) 
+# OR 
+df %>% arrange(A)
+# Descending order: If you want to sort in descending order, you can use the desc()
+# function:
+arrange(df, desc(A)) 
+# OR
+df %>%arrange(desc(A))
+# Sorting by multiple columns: If you want to sort by multiple columns, simply add the
+# columns in the order you want:
+arrange(df, A, B) 
+# OR 
+df %>% arrange(A,B)
+# This will first sort by column A and then by column B for rows with the same values of 
+```
+
+```{r Part 01 Slide 26}
+# Example: Sort the OrangeNew data by circumference
+
+# NewOrange%>%
+#   arrange(circumference)
+```
+
+```{r Part 01-02 Slide 27 Activity 03}
+# Activity 03
+# Use the newflight data created from the previous activity
+# Sort by the arrival delay time
+# Generate an appropriate graph to see the relationship between arrival
+# delay and speed
+# Is there a strong correlation?
+  
+library(nycflights13)
+library(dplyr)
+library(ggplot2)
+
+# Load the previously created CSV file into R
+newflight <- read.csv("newflight.csv")
+
+# Sort by the arrival delay time
+sorted_flights <- newflight %>% arrange(arr_delay)
+
+# Generate a scatterplot to visualize the relationship between arrival delay and speed
+ggplot(sorted_flights, aes(x = speed, y = arr_delay)) +
+  geom_point(color = "black") +
+  geom_smooth(method = "lm", se = FALSE, color = "blue") +
+  labs(title = "Relationship between arrival delay and speed",
+       y = "Arrival delay",
+       x = "Speed")
+
+```
+
+
+```{r Part 02 Slide 28}
+# Package: “dplyr”
+# group_by()
+# The group_by() function groups data by one or more columns.
+# The result is a grouped data frame, but it looks almost the same as the original data
+# frame.
+# The difference becomes apparent when you use it with other dplyr verbs.
+data <- data.frame(
+  Category = c('A', 'B', 'A', 'A', 'B', 'B'),
+  Value = c(10, 20, 30, 40, 50, 60)
+  )
+grouped_data <- data %>%
+group_by(Category)
+
+```
+
+```{r Part 02 Slide 29}
+# Package: “dplyr”
+# summarize()
+# The summarize() function is used to compute summary statistics for each group.
+# It can be used with any function that returns a single value (like mean, sum, min, etc.).
+# When you use summarize() on a grouped data frame, it computes the summary
+# statistics for each group and returns a new data frame.
+# Example:
+summary_data <- grouped_data %>%
+  summarize(
+    Total = sum(Value),
+    Average = mean(Value)
+  )
+summary_data
+
+```
+
+```{r Part 02 Slide 30}
+# group_by() and summarize()
+# group_by() and summarize() usually go together
+# Example:
+data %>%
+group_by(Category) %>%
+  summarize(
+    Total = sum(Value),
+    Average = mean(Value)
+  )
+# Example:
+# Use the InsectSprays data to get the mean count of each spray, and plot the
+# means using a bar chart.
+library(tidyverse)
+library(ggplot2)
+head(InsectSprays)
+InsectSprays%>%
+  group_by(spray)%>%
+  summarize(avgc=mean(count))%>%
+  ggplot(aes(x=spray, y=avgc))+geom_bar(stat = "identity")
+
+mpg%>%
+  filter(!is.na(hwy))%>%
+  group_by(manufacturer)%>%
+  summarize(avghwy=mean(hwy))
+
+mpg %>%
+  group_by(manufacturer) %>%
+  summarize(total_models = n()) %>%
+  arrange(desc(total_models))
+
+
+```
+
+```{r Part 02 Slide 31}
+# Values of NA is considered as missing values
+# If there are missing values, we can’t find the mean
+# To find the descriptive statistics without missing values:
+
+# filter(!is.na(variable)) %>%
+#   group_by(...) %>%
+#   summarize(average=mean(variable))
+
+# OR
+
+# group_by() %>%
+#   summarize(average=mean(variable, na.rm=TRUE))
+
+# To find the total of none missing individuals:
+
+# filter(!is.na(variable) %>%
+# group_by() %>%
+# summarize(total=n())
+
+```
+
+```{r Part 02 Slide 32}
+# Example: Use the mpg data to do the following
+# Keep all the none NA’s from the hwy, and find the average highway
+# miles per gallon by manufacturer. Which manufacturer has the
+# highest highway miles per gallon?
+# Group by manufacturer and find the total number of each
+# manufacturer of cars. (there is no missing value of manufacturer, so no
+# worry about missing values here
+library(tidyverse)
+library(ggplot2)
+head(InsectSprays)
+InsectSprays%>%
+  group_by(spray)%>%
+  summarize(avgc=mean(count))%>%
+  ggplot(aes(x=spray, y=avgc))+geom_bar(stat = "identity")
+
+mpg%>%
+  filter(!is.na(hwy))%>%
+  group_by(manufacturer)%>%
+  summarize(avghwy=mean(hwy))
+
+mpg %>%
+  group_by(manufacturer) %>%
+  summarize(totalm = n()) %>%
+  arrange(desc(totalm))
+
+```
+
+```{r Part 02 Slide 33 Activity 04}
+# Activity 04
+# Use the flights data
+# Keep the none NA’s of departure delay values, and find the mean departure
+# delay by destination
+# Find the total missing departure delay flights by destination
+# (Hint: keep all NA’s of departure delays and find the total by destination)
+# The missing values of air_time show the cancelled flights, find the total cancelled
+# flights by month, and generate a line chart to see the change over time.
+library(nycflights13)
+library(dplyr)
+library(ggplot2)
+
+# Keep non-NA departure delay values and find mean departure delay by destination
+mean_dep_delay <- flights %>%
+  filter(!is.na(dep_delay)) %>%
+  group_by(dest) %>%
+  summarize(mean_dep_delay = mean(dep_delay, na.rm = TRUE))
+
+# Find total missing departure delay flights by destination
+total_missing_dep_delay <- flights %>%
+  filter(is.na(dep_delay)) %>%
+  group_by(dest) %>%
+  summarize(total_missing_dep_delay = n())
+
+# Find total cancelled flights by month
+cancelled_flights <- flights %>%
+  filter(is.na(air_time)) %>%
+  group_by(month) %>%
+  summarize(total_cancelled_flights = n())
+
+# Generate a line chart to visualize the change in cancelled flights over time
+ggplot(cancelled_flights, aes(x = month, y = total_cancelled_flights)) +
+  geom_line() +
+  labs(x = "Month", y = "Total Cancelled Flights", title = "Change in Cancelled Flights Over Time")
+
+
+```
+
+```{r Part 02 Slide 36}
+# This function returns all rows from x where there are matching values in y, and all
+# columns from x and y. If there are multiple matches between x and y, all
+# combinations of the matches are returned.
+# Rows in x with no match in y and rows in y with no match in x will not be in the
+# result.
+library(dplyr)
+  df1 <- data.frame(ID = c(1, 2, 3), Name = c("A", "B", "C"))
+  df2 <- data.frame(ID = c(2, 3, 4), Score = c(80, 90, 100))
+inner_join(df1, df2, by = "ID")
+
+
+```
+
+```{r Part 02 Slide 37}
+# left_join
+# This function returns all rows from x, and all columns from x and y. Rows in x with
+# no match in y will still be returned, but with NA in the columns from y.
+# In other words, it keeps all rows from the "left" dataset (i.e., x), regardless of
+# whether there is a matching row in the "right" dataset (y).
+left_join(df1, df2, by = "ID")
+
+```
+
+```{r Part 02 Slide 38}
+# right_join
+# This function returns all rows from y, and all columns from x and y. Rows in y with
+# no match in x will still be returned, but with NA in the columns from x.
+# It's the opposite of a left_join(). It keeps all rows from the "right" dataset (i.e., y),
+# regardless of whether there is a matching row in the "left" dataset (x).
+right_join(df1, df2, by = "ID")
+
+
+```
+
+```{r Part 02 Slide 39}
+# Inner_join, left_join, and right_join
+# Example: join the datasets of flights and airlines by “carrier”
+# If there are more than 1 common variable between two data frames, use
+# by=c()
+library(nycflights13)
+inner_join(flights, airlines, by = "carrier")
+
+```
+
+```{r Part 02 Slide 40 Activity 05}
+# Activity 05
+# Merge the following two data sets by both “country” and “year”
+
+# Country, Year, x1
+# Canada,  2000, 21
+# Canada,  2001, 25
+# USA,     2000, 23
+# USA,     2001, 28
+# Japan,   2000, 29
+# Japan,   2001, 30
+
+# Country, Year, x2
+# Canada,  2000, 2
+# Canada,  2001, 6
+# USA,     2000, 7
+# USA,     2001, 12
+# Japan,   2000, 6
+# Japan,   2001, 30
+
+# Create the first dataset
+df1 <- data.frame(
+  country = c("Canada", "Canada", "USA", "USA", "Japan", "Japan"),
+  year = c(2000, 2001, 2000, 2001, 2000, 2001),
+  x1 = c(21, 25, 23, 28, 29, 30)
+)
+
+# Create the second dataset
+df2 <- data.frame(
+  country = c("Canada", "Canada", "USA", "USA", "Japan", "Japan"),
+  year = c(2000, 2001, 2000, 2001, 2000, 2001),
+  x2 = c(2, 6, 7, 12, 6, 30)
+)
+
+# Merge the datasets by both "country" and "year"
+merged_df <- merge(df1, df2, by = c("country", "year"))
+
+# View the merged dataset
+print(merged_df)
+
+
+```
+

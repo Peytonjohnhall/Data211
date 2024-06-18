@@ -1,0 +1,22 @@
+---
+title: "Week7GroupWork.rmd"
+author: "Peyton Hall"
+date: "02/22/2024"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r}
+#install.packages("nycflights13")
+library(nycflights13)
+library(dplyr)
+
+df <- flights %>%
+  filter(month == 1, origin == "JFK", dest == "MSP") %>%
+  select(dep_time,dep_delay,arr_time,arr_delay,air_time,distance)
+
+head(df)
+
+```
+

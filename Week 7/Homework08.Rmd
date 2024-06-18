@@ -1,0 +1,174 @@
+---
+title: "Homework 08"
+author: "Peyton Hall"
+date: "03/16/2024"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r Clear the Environment}
+rm(list=ls())
+```
+
+```{r Load Necessary Libraries}
+library(readxl)
+library(dplyr)
+library(ggplot2)
+library(nycflights13)
+```
+
+```{r Question 01}
+COVID_19_Vaccine <- read_excel("~/Desktop/Data211/Week 7/COVID-19-Vaccine.xlsx")
+COVID_19_Vaccine
+# 1. The data COVID-19-Vaccine on D2L recorded the developer, product category 
+#    (type of vaccine), stage of development, and vaccine description by 
+#    September 2020. Do the following three parts in one pipeline.
+# a. Keep non-missing values of product category
+COVID_19_Vaccine <- COVID_19_Vaccine %>%
+  filter(!is.na(ProductCategory)) %>%
+  filter(!is.na(StageDevelopment)) %>%
+  filter(!is.na(ProductDescription))
+# b. Find the total number of vaccines of each product category using 
+#    group_by() and summarize()
+vaccine_counts <- COVID_19_Vaccine %>%
+  group_by(ProductCategory) %>%
+  summarize(Count = n())
+# c. Sort the total counts of each product category 
+#    in b) (i.e. "Inactivated virus")
+sorted_vaccine_counts <- vaccine_counts %>%
+  arrange(desc(Count))
+```
+
+```{r Question 02}
+Recycling <- read_excel("~/Desktop/Data211/Week 7/Recycling.xlsx")
+Recycling
+# 2. Use the data Recycling on d2l. This data is obtained from the Minnesota 
+#    Pollution Control Agency (MPCA) site. The data recorded the amount of 
+#    recycling in residential area (ResTons) and in commercial area 
+#    (CIITons) from 1991 to 2017 for the 87 Minnesota counties. Use tidyverse 
+#    functions to answer the following:
+# a. Find the mean residential recycling (ResTons) by year
+mean_residential_recycling <- Recycling %>%
+  group_by(Year) %>%
+  summarize(mean_residential_recycling = mean(ResTons))
+mean_residential_recycling
+# b. Graph the means in a) over years (note: a) and b) can be in one pipeline)
+#    Graph the mean residential recycling over years
+ggplot(mean_residential_recycling, aes(x = Year, y = 
+                                       mean_residential_recycling)) +
+  geom_line() + geom_point() + labs(x = "Year", 
+                                    y = "Mean Residential Recycling (ResTons)", 
+       title = "Minnesota Mean Residential Recycling Over Years")
+# c. Find the mean residential recycling (ResTons) by county. What are the top 
+#    3 counties with the highest mean amount of residential recycling? Does that
+#    make sense in MN? Use comments to answer in your R Markdown file.
+mean_residential_recycling_by_county <- Recycling %>%
+  group_by(County) %>%
+  summarize(mean_residential_recycling = mean(ResTons))
+# Sort the data to find the top 3 counties with the 
+# highest mean residential recycling
+top_3_counties <- mean_residential_recycling_by_county %>%
+  top_n(3, mean_residential_recycling) %>%
+  arrange(desc(mean_residential_recycling))
+top_3_counties
+# Answer analysis:
+# The top three counties with the highest mean amount of residential recycling 
+# are (#1) Hennepin, (#2) Ramsey, and (#3) Dakota. This seems to make sense to
+# me, being a Minnesota resident my whole life, because these counties contain
+# civilized cities including (but not limited to) Apple Valley, Maplewood, 
+# and Maple Grove.
+# d. Find the mean residential recycling (ResTons) by category.
+mean_residential_recycling_by_category <- Recycling %>%
+  group_by(Category) %>% # Group the data by category
+  summarize(mean_residential_recycling = mean(ResTons)) # calculate the mean
+mean_residential_recycling_by_category
+
+```
+
+```{r Question 03}
+Expenditure_and_Revenue <- read_excel("~/Desktop/Data211/Week 10/Expenditure and Revenue.xlsx")
+Expenditure_and_Revenue
+# 3. The data Expenditure and Revenue on D2L recorded the expenditure and 
+#    revenue from Minnesota recycling from 2014 to 2017
+# a. Create a new variable to show the total expenditure 
+#    (Administration+Education+Recycling)
+Expenditure_and_Revenue <- Expenditure_and_Revenue %>%
+  mutate(Total_Expenditure = Administration + Education + Recycling)
+Expenditure_and_Revenue
+# b. Create a new variable to show the total revenue 
+#    (SCORE revenue+Local revenue+other revenue)
+Expenditure_and_Revenue <- Expenditure_and_Revenue %>%
+  mutate(Total_Revenue = `SCORE Revenue` + `Local Revenue` + `Other Revenue`)
+Expenditure_and_Revenue
+# c. Find the average expenditure and average revenue by year.
+averages_by_year <- Expenditure_and_Revenue %>%
+  group_by(Year) %>%
+  summarise(Average_Expenditure = mean(Total_Expenditure, na.rm = TRUE),
+            Average_Revenue = mean(Total_Revenue, na.rm = TRUE))
+averages_by_year
+```
+
+```{r Question 04}
+# 4. Use the nycflights13 package planes data to answer the following questions:
+# install.packages("nycflights13")
+str(planes) # view the structure
+head(planes) # view the first few rows
+# a. Based on the planes data, group by manufacture and count the total using 
+#    one pipeline.
+planes_summary <- planes %>%
+  group_by(manufacturer) %>%
+  summarise(Count = n())
+planes_summary
+# b. Start a new pipeline: generate a new column named “company” using mutate() 
+#    and the following is the rule:
+#    If a manufacture is in the top five common manufactures, keep its 
+#    manufacture’s name, if not, then name it “OTHERS”. 
+#    (Hint: use ifelse( ... %in% c(....), manufacturer, OTHERS)
+planes_modified <- planes %>%
+  mutate(company = ifelse(manufacturer %in% names(head(sort(table(manufacturer), 
+         decreasing = TRUE), 5)), manufacturer, "OTHERS"))
+planes_modified
+# c. Generate a bar graph to show the counts of manufactures of the flights 
+#    using the new variable generated      in b)
+ggplot(planes_modified, aes(x = company)) +
+  geom_bar(fill = "skyblue", color = "black") +
+  labs(title = "Counts of Manufacturers of Flights",
+       x = "Manufacturer", y = "Count") + theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r Question 05}
+# 5. Create the following two tables first, and then merge the two tables:
+#    StudentID, Gender, Age,
+#    A,         Female, 21
+#    B,         Male,   19
+#    C,         Male,   20
+#    D,         Female, 22
+#    E,         Female, 20
+
+#    StudentID, Midterm, Final
+#    A,         78,      82
+#    B,         97,      95
+#    C,         81,      76
+#    D,         93,      95
+#    E,         82,      86
+
+# Create the first table
+table1 <- data.frame(StudentID = c("A", "B", "C", "D", "E"),
+                     Gender = c("Female", "Male", "Male", "Female", "Female"),
+                     Age = c(21, 19, 20, 22, 20))
+table1
+# Create the second table
+table2 <- data.frame(StudentID = c("A", "B", "C", "D", "E"),
+                     Midterm = c(78, 97, 81, 93, 82),
+                     Final = c(82, 95, 76, 95, 86))
+table2
+# Merge the two tables based on the StudentID column
+merged_table <- merge(table1, table2, by = "StudentID")
+merged_table
+```
